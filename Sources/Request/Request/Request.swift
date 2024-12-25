@@ -97,6 +97,10 @@ public struct AnyRequest<ResponseType> where ResponseType: Decodable {
         modify { $0.onStatusCode = callback }
     }
     
+    public func withAuthorization(_ authorization: Auth) -> Self {
+        self
+    }
+    
     /// Performs the `Request`, and calls the `onData`, `onString`, `onJson`, and `onError` callbacks when appropriate.
     public func call() {
         buildPublisher()
