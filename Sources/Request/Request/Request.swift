@@ -43,7 +43,7 @@ public typealias Request = AnyRequest<Data>
 public struct AnyRequest<ResponseType> where ResponseType: Decodable {
     public let combineIdentifier = CombineIdentifier()
 
-    private var rootParam: RequestParam
+    public var rootParam: RequestParam
     
     internal var onData: ((Data) -> Void)?
     internal var onString: ((String) -> Void)?
