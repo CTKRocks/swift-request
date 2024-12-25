@@ -61,7 +61,7 @@ public struct AnyRequest<ResponseType> where ResponseType: Decodable {
         self.rootParam = rootParam
     }
     
-    public func modify(_ modify: (inout Self) -> Void) -> Self {
+    internal func modify(_ modify: (inout Self) -> Void) -> Self {
         var mutableSelf = self
         modify(&mutableSelf)
         return mutableSelf
@@ -97,8 +97,9 @@ public struct AnyRequest<ResponseType> where ResponseType: Decodable {
         modify { $0.onStatusCode = callback }
     }
     
-    public func withAuthorization(_ authorization: Auth) -> Self {
-        self
+    public mutating func withAuthorization(_ authorization: Auth) -> Self {
+        self.rootParam = CombinedParams(children: [Header.Authorization(authorization)])
+        return self
     }
     
     /// Performs the `Request`, and calls the `onData`, `onString`, `onJson`, and `onError` callbacks when appropriate.
