@@ -61,7 +61,7 @@ public struct AnyRequest<ResponseType> where ResponseType: Decodable {
         self.rootParam = rootParam
     }
     
-    internal func modify(_ modify: (inout Self) -> Void) -> Self {
+    public func modify(_ modify: (inout Self) -> Void) -> Self {
         var mutableSelf = self
         modify(&mutableSelf)
         return mutableSelf
