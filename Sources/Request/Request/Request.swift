@@ -97,6 +97,7 @@ public struct AnyRequest<ResponseType> where ResponseType: Decodable {
         modify { $0.onStatusCode = callback }
     }
     
+    /// Modifies self to contain the procided Auth struct in its headers
     public mutating func withAuthorization(_ authorization: Auth) -> Self {
         self.rootParam = CombinedParams(children: [Header.Authorization(authorization),
                                                    rootParam])
