@@ -43,7 +43,7 @@ public typealias Request = AnyRequest<Data>
 public struct AnyRequest<ResponseType> where ResponseType: Decodable {
     public let combineIdentifier = CombineIdentifier()
 
-    public var rootParam: RequestParam
+    internal var rootParam: RequestParam
     
     internal var onData: ((Data) -> Void)?
     internal var onString: ((String) -> Void)?
@@ -98,7 +98,8 @@ public struct AnyRequest<ResponseType> where ResponseType: Decodable {
     }
     
     public mutating func withAuthorization(_ authorization: Auth) -> Self {
-        self.rootParam = CombinedParams(children: [Header.Authorization(authorization)])
+        self.rootParam = CombinedParams(children: [Header.Authorization(authorization),
+                                                   rootParam])
         return self
     }
     
