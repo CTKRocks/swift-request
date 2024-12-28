@@ -155,5 +155,21 @@ extension AnyRequest: Equatable {
         let rhsSession = rhs.buildSession()
         return lhsSession.configuration == rhsSession.configuration && lhsSession.request == rhsSession.request
     }
+    
+    public func prettyJson() -> String {
+        
+        
+        let session = self.buildSession()
+        let request = session.request
+        let conf = session.configuration
+        return """
+               \(request.httpMethod) \(request.url?.absoluteString ?? "")
+               Headers: \(request.allHTTPHeaderFields)
+               Body: \(request.httpBody)
+               Config: \(conf)
+               """
+        
+    }
+
 }
 
