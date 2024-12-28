@@ -155,10 +155,11 @@ extension AnyRequest: Equatable {
         let rhsSession = rhs.buildSession()
         return lhsSession.configuration == rhsSession.configuration && lhsSession.request == rhsSession.request
     }
-    
+}
+
+extension AnyRequest {
     public func prettyJson() -> String {
-        
-        
+    
         let session = self.buildSession()
         let request = session.request
         let conf = session.configuration
@@ -170,6 +171,4 @@ extension AnyRequest: Equatable {
                """
         
     }
-
 }
-
