@@ -165,10 +165,30 @@ extension AnyRequest {
         let conf = session.configuration
         return """
                \(request.httpMethod) \(request.url?.absoluteString ?? "")
-               Headers: \(request.allHTTPHeaderFields)
-               Body: \(request.httpBody)
+               Headers: \(Json(request.allHTTPHeaderFields).stringified ?? "")
+               Body: \(request.httpBody?.prettyJSON() ?? "")
                Config: \(conf)
                """
         
+    }
+}
+
+extension Data {
+    func toString() -> String {
+        return String(data:self, encoding: .utf8) ?? ""
+    }
+    func prettyJSON() -> String {
+        do {
+            let json = try JSONSerialization.jsonObject(with: self, options: [])
+            let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+            guard let jsonString = String(data: data, encoding: .utf8) else {
+                print("Inavlid data")
+                return ""
+            }
+            return jsonString
+        } catch {
+            print("Data+prettyJSON | Error: \(error.localizedDescription)")
+        }
+        return ""
     }
 }
