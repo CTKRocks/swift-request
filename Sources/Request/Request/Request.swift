@@ -168,15 +168,14 @@ extension AnyRequest {
         
          let session = self.buildSession()
          let request = session.request
-         let conf = session.configuration
         
             guard  let method = request.httpMethod,
                    let url = request.url,
                    let headers = request.allHTTPHeaderFields,
-                   let jh = Json(headers).stringified,
-                   let body = request.httpBody
-            else { return ""}
-        
+                   let jh = Json(headers).stringified
+            else { return " "}
+        let body = request.httpBody ?? Data()
+
         return """
                \(method.uppercased()) \(url)
                Headers: \(jh)
