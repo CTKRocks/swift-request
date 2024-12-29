@@ -7,14 +7,14 @@
 
 import Foundation
 
-internal struct CombinedParams: RequestParam, SessionParam {
-    fileprivate let children: [RequestParam]
+public struct CombinedParams: RequestParam, SessionParam {
+    public let children: [RequestParam]
 
     init(children: [RequestParam]) {
         self.children = children
     }
 
-    func buildParam(_ request: inout URLRequest) {
+    public func buildParam(_ request: inout URLRequest) {
         children
             .sorted { a, _ in (a is Url) }
             .filter { !($0 is SessionParam) || $0 is CombinedParams }
@@ -23,7 +23,7 @@ internal struct CombinedParams: RequestParam, SessionParam {
             }
     }
 
-    func buildConfiguration(_ configuration: URLSessionConfiguration) {
+    public func buildConfiguration(_ configuration: URLSessionConfiguration) {
         children
             .compactMap { $0 as? SessionParam }
             .forEach {

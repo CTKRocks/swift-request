@@ -43,7 +43,7 @@ public typealias Request = AnyRequest<Data>
 public struct AnyRequest<ResponseType> where ResponseType: Decodable {
     public let combineIdentifier = CombineIdentifier()
 
-    private var rootParam: RequestParam
+    internal var rootParam: RequestParam
     
     internal var onData: ((Data) -> Void)?
     internal var onString: ((String) -> Void)?
@@ -97,6 +97,13 @@ public struct AnyRequest<ResponseType> where ResponseType: Decodable {
         modify { $0.onStatusCode = callback }
     }
     
+    /// Modifies self to contain the procided Auth struct in its headers
+    public mutating func withAuthorization(_ authorization: Auth) -> Self {
+        self.rootParam = CombinedParams(children: [Header.Authorization(authorization),
+                                                   rootParam])
+        return self
+    }
+    
     /// Performs the `Request`, and calls the `onData`, `onString`, `onJson`, and `onError` callbacks when appropriate.
     public func call() {
         buildPublisher()
@@ -142,6 +149,12 @@ public struct AnyRequest<ResponseType> where ResponseType: Decodable {
     }
 }
 
+extension AnyRequest: Identifiable {
+    public var id: String {
+        buildSession().request.url!.absoluteString
+    }
+}
+
 extension AnyRequest: Equatable {
     public static func == (lhs: AnyRequest<ResponseType>, rhs: AnyRequest<ResponseType>) -> Bool {
         let lhsSession = lhs.buildSession()
@@ -150,3 +163,48 @@ extension AnyRequest: Equatable {
     }
 }
 
+extension AnyRequest {
+    public func prettyJson() -> String {
+        
+        let session = self.buildSession()
+        let request = session.request
+        let method = request.httpMethod ?? "WTF"
+        let url = request.url?.absoluteString ?? ""
+        let headers = request.allHTTPHeaderFields
+        let body = request.httpBody ?? Data()
+        let jh = Json(headers ?? [:]).stringified ?? "No Headers"
+
+        return """
+               Beginning of Request.
+               ----------------------------------
+               Endpoint: \(method.uppercased()) \(url)
+               __________________________________
+               Headers: \(jh)
+               __________________________________
+               Body: \(body.prettyJSON())
+               ___________________________________
+               End Of Request.
+               """
+        
+    }
+}
+
+extension Data {
+    func toString() -> String {
+        return String(data:self, encoding: .utf8) ?? ""
+    }
+    func prettyJSON() -> String {
+        do {
+            let json = try JSONSerialization.jsonObject(with: self, options: [])
+            let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+            guard let jsonString = String(data: data, encoding: .utf8) else {
+                print("Inavlid data")
+                return ""
+            }
+            return jsonString
+        } catch {
+            print("Data+prettyJSON | Error: \(error.localizedDescription)")
+        }
+        return ""
+    }
+}
