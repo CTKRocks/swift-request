@@ -177,11 +177,13 @@ extension AnyRequest {
         let body = request.httpBody ?? Data()
 
         return """
-               \(method.uppercased()) \(url)
+               Endpoint: \(method.uppercased()) \(url)
+               __________________________________
                Headers: \(jh)
                __________________________________
                Body: \(body.prettyJSON())
                ___________________________________
+               End Of Request.
                """
         
     }
