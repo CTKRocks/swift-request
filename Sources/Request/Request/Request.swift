@@ -166,17 +166,17 @@ extension AnyRequest: Equatable {
 extension AnyRequest {
     public func prettyJson() -> String {
         
-         let session = self.buildSession()
-         let request = session.request
-        
-            guard  let method = request.httpMethod,
-                   let url = request.url,
-                   let headers = request.allHTTPHeaderFields,
-                   let jh = Json(headers).stringified
-            else { return " "}
+        let session = self.buildSession()
+        let request = session.request
+        let method = request.httpMethod ?? "WTF"
+        let url = request.url?.absoluteString ?? ""
+        let headers = request.allHTTPHeaderFields
         let body = request.httpBody ?? Data()
+        let jh = Json(headers ?? [:]).stringified ?? "No Headers"
 
         return """
+               Beginning of Request.
+               ----------------------------------
                Endpoint: \(method.uppercased()) \(url)
                __________________________________
                Headers: \(jh)
