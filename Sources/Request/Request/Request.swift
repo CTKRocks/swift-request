@@ -149,6 +149,12 @@ public struct AnyRequest<ResponseType> where ResponseType: Decodable {
     }
 }
 
+extension AnyRequest: Identifiable {
+    public var id: String {
+        buildSession().request.url!.absoluteString
+    }
+}
+
 extension AnyRequest: Equatable {
     public static func == (lhs: AnyRequest<ResponseType>, rhs: AnyRequest<ResponseType>) -> Bool {
         let lhsSession = lhs.buildSession()
